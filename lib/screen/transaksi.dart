@@ -13,8 +13,9 @@ _TransaksiState createState() => _TransaksiState();
 }
 
 class _TransaksiState extends State<Transaksi> {
-  var data;
+  var data = [];
   var id;
+
   @override
   void initState() {
 
@@ -53,8 +54,8 @@ class _TransaksiState extends State<Transaksi> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                  AddPerencanaan()), (Route<dynamic> route) => false);
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+                  AddPerencanaan()));
 
             },
             icon: const Icon(Icons.add_circle),
@@ -66,17 +67,23 @@ class _TransaksiState extends State<Transaksi> {
         child: Container(
           width: MediaQuery.of(context).size.width,
           padding: EdgeInsets.only(top: 25, left: 15, right: 15),
-          child: ListView.builder(
+          child:
+          ListView.builder(
               physics: AlwaysScrollableScrollPhysics(),
               itemCount: data.length,
               itemBuilder: (context, i) {
+
                 // print(data[i]);
                 return Cardbox(
                   transaksi: data[i]["transaksi"],
                   waktu_transaksi: data[i]["created_at"],
                   biaya: data[i]['biaya'],
+                  id: data[i]['id'].toString(),
+
 
                 );
+
+
               }),
 
         ),

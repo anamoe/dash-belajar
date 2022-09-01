@@ -1,3 +1,4 @@
+import 'package:dashbelajar/screen/add_perencanaan.dart';
 import 'package:dashbelajar/widget/maincolor.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -6,9 +7,10 @@ class Cardbox extends StatelessWidget {
   String waktu_transaksi;
   String transaksi;
   String biaya;
+  String id;
 
 
-  Cardbox({this.transaksi,this.waktu_transaksi,this.biaya});
+  Cardbox({this.transaksi,this.waktu_transaksi,this.biaya,this.id});
 
 
   @override
@@ -111,13 +113,35 @@ class Cardbox extends StatelessWidget {
                         ),
                     ],
                   ),
-                
-                SizedBox(height: 8),
 
+                Row(
+                  children:[
+                    Expanded(
+                      flex:50,
+                      child: IconButton(
+                        onPressed: () async {
+
+                          await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddPerencanaan(biaya: biaya, transaksi: transaksi,id:id)));
+
+                        },
+                        icon: const Icon(Icons.edit),
+                      ),
+                    ),
+
+                  ],
+                ),
+
+
+                SizedBox(height: 8),
 
                 SizedBox(height: 10)
 
               ],
+
             ));
   }
 }

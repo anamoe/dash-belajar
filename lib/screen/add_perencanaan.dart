@@ -7,6 +7,14 @@ import 'package:dashbelajar/widget/maincolor.dart';
 import 'package:flutter/material.dart';
 
 class AddPerencanaan extends StatefulWidget {
+  String waktu_transaksi;
+  String transaksi;
+  String biaya;
+  String id;
+
+
+  AddPerencanaan ({this.transaksi,this.waktu_transaksi,this.biaya,this.id});
+
   @override
   _AddPerencanaanState createState() => _AddPerencanaanState();
 }
@@ -36,22 +44,22 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
 
 
   @override
+
   Widget build(BuildContext context) {
+    print(widget.id);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Unggah Perencanaan Anda",
+          widget.id==null?"Unggah Perencanaan Anda":"Edit Perencanaan Anda",
           style: const TextStyle(color: Colors.black),
         ),
         backgroundColor: Maincolor.colormain,
         leading: IconButton(
           onPressed: () {
-            int idx = 1;
-            Timer(Duration(milliseconds: 200), () {
-              Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-                  LayoutUtama(index: idx)), (Route<dynamic> route) => false);
-            });
+
+              Navigator.of(context).pop();
+
 
           },
           icon: const Icon(
@@ -63,7 +71,9 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
           IconButton(
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                _perencanaan();
+
+                  _perencanaan();
+
               }
 
             },
@@ -96,6 +106,7 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
+                        initialValue: widget.transaksi,
                         validator: (trans) {
                           if (trans.isEmpty) {
                             return 'Masukkan Jenis Transaksi';
@@ -147,6 +158,7 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
+                        initialValue: '-',
                         validator: (keperluan) {
                           if (keperluan.isEmpty) {
                             return 'Masukkan Keperluan';
@@ -197,6 +209,7 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
+                      initialValue: widget.biaya,
                       validator: (biaya) {
                         if (biaya.isEmpty) {
                           return 'Masukkan Biaya';
@@ -297,9 +310,16 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
     setState(() {
       _isLoading = true;
     });
-    var data = {'transaksi': jenisval, 'biaya': biayaval,'keperluan':keperluanval};
 
-    var res = await Network().auth(data, '/create-transaksi');
+    var data = {'transaksi': jenisval, 'biaya': biayaval,'keperluan':keperluanval};
+    String url= '';
+    if(widget.id!=null) {
+      url = '/create-transaksi';
+    }else{
+      url = '/transaksi-update/'+widget.id;
+    }
+
+    var res = await Network().auth(data, url);
 
     var body = json.decode(res.body);
     if (body['pesan'] == "sukses") {
