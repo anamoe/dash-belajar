@@ -8,9 +8,10 @@ class Cardbox extends StatelessWidget {
   String transaksi;
   String biaya;
   String id;
+  String keperluan;
 
 
-  Cardbox({this.transaksi,this.waktu_transaksi,this.biaya,this.id});
+  Cardbox({this.transaksi,this.waktu_transaksi,this.biaya,this.id,this.keperluan});
 
 
   @override
@@ -89,6 +90,29 @@ class Cardbox extends StatelessWidget {
                     ],
                   ),
                 SizedBox(height: 8),
+                Row(
+                  children:[
+                    Expanded(
+                      flex:50,
+                      child: Container(
+                        padding: EdgeInsets.only(left: 8),
+                        child: Text('Keperluan',style: TextStyle(color: Maincolor.colormain,
+                            fontSize: 15
+                        )),
+                      ),
+                    ),
+                    Expanded(
+                      flex:50,
+                      child: Container(
+                        padding: EdgeInsets.only(right: 8),
+                        alignment: Alignment.centerRight,
+                        child: Text('$keperluan',style: TextStyle(color: Maincolor.colormain,
+                            fontSize: 15
+                        )),
+                      ),
+                    ),
+                  ],
+                ),
                 
                 Row(
                   children:[
@@ -125,7 +149,7 @@ class Cardbox extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      AddPerencanaan(biaya: biaya, transaksi: transaksi,id:id)));
+                                      AddPerencanaan(biaya: biaya, transaksi: transaksi,id:id,keperluan:keperluan)));
 
                         },
                         icon: const Icon(Icons.edit),

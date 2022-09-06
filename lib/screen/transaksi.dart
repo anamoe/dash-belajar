@@ -79,6 +79,8 @@ class _TransaksiState extends State<Transaksi> {
                   waktu_transaksi: data[i]["created_at"],
                   biaya: data[i]['biaya'],
                   id: data[i]['id'].toString(),
+                  keperluan: data[i]['keperluan'],
+
 
 
                 );

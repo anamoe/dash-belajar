@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class Network{
   // final String _urls = 'http://192.168.1.2/dash/api';
-  final String _url = 'https://1934-103-40-54-214.ngrok.io/api';
+  final String _url = 'https://e1c4-103-40-54-214.ngrok.io/api';
 
   String token;
 

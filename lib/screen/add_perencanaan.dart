@@ -1,19 +1,28 @@
+// import 'package:path/path.dart';
 import 'dart:async';
 import 'dart:convert';
-
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:dashbelajar/layout/layoututama.dart';
 import 'package:dashbelajar/network/api.dart';
 import 'package:dashbelajar/widget/maincolor.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+
 
 class AddPerencanaan extends StatefulWidget {
   String waktu_transaksi;
   String transaksi;
   String biaya;
   String id;
+  String keperluan;
 
 
-  AddPerencanaan ({this.transaksi,this.waktu_transaksi,this.biaya,this.id});
+  AddPerencanaan ({this.transaksi,this.waktu_transaksi,this.biaya,this.id,this.keperluan});
 
   @override
   _AddPerencanaanState createState() => _AddPerencanaanState();
@@ -24,11 +33,12 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   bool _secureText = true;
+  File image;
+  File imageFile;
 
+  var croppedFile, uint8list;
+  String imagetransaksi;
 
-  // TextEditingController jenistransaksi = TextEditingController();
-  // TextEditingController keperluan = TextEditingController();
-  // TextEditingController biaya = TextEditingController();
 
   showHide() {
     setState(() {
@@ -41,12 +51,70 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
     );
     _scaffoldKey.currentState.showSnackBar(snackBar);
   }
+  @override
+
+  @override
+  void initState() {
+    if (widget.id != null) {
+      //
+      // _fileFromImageUrl();
+    }
+    super.initState();
+  }
+  // void _fileFromImageUrl() async {
+  //   final response = await http.get(Uri.parse(imagetransaksi));
+  //   final documentDirectory = await getApplicationDocumentsDirectory();
+  //   setState(() {
+  //     imageFile = File(join(documentDirectory.path, 'imagecache.png'));
+  //     imageFile.writeAsBytesSync(response.bodyBytes);
+  //   });
+  // }
+
+  void pickImage() async {
+    image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    croppedFile = await ImageCropper().cropImage(
+      sourcePath: image.path,
+      aspectRatioPresets: [
+        CropAspectRatioPreset.square,
+        CropAspectRatioPreset.ratio3x2,
+        CropAspectRatioPreset.original,
+        CropAspectRatioPreset.ratio4x3,
+        CropAspectRatioPreset.ratio16x9
+      ],
+    );
+    if (croppedFile != null) {
+      setState(() {
+        imageFile = croppedFile;
+      });
+    }
+  }
+
+  void dialogLoading(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Container(
+            margin: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("uploading"),
+                const CircularProgressIndicator.adaptive()
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
 
   @override
 
   Widget build(BuildContext context) {
-    print(widget.id);
+    // print(widget.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -158,7 +226,7 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
-                        initialValue: '-',
+                        initialValue: widget.keperluan,
                         validator: (keperluan) {
                           if (keperluan.isEmpty) {
                             return 'Masukkan Keperluan';
@@ -280,21 +348,21 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
                           ),
                         ),
                         onPressed: () {
-                          // pickImage();
+                          pickImage();
                         },
                       ),
                     ),
                   ),
 
-                  // Visibility(
-                  //   visible: imageFile != null,
-                  //   child: Container(
-                  //     margin: const EdgeInsets.all(15),
-                  //     child: imageFile != null
-                  //         ? Image.file(imageFile!)
-                  //         : Container(),
-                  //   ),
-                  // ),
+                  Visibility(
+                    visible: imageFile != null,
+                    child: Container(
+                      margin: const EdgeInsets.all(15),
+                      child: imageFile != null
+                          ? Image.file(imageFile)
+                          : Container(),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -306,17 +374,20 @@ class _AddPerencanaanState extends State<AddPerencanaan> {
   }
 
   void _perencanaan() async {
+    print(imageFile);
 
     setState(() {
       _isLoading = true;
     });
 
-    var data = {'transaksi': jenisval, 'biaya': biayaval,'keperluan':keperluanval};
+    var data = {'transaksi': jenisval, 'biaya': biayaval,'keperluan':keperluanval,'bukti_transaksi':imageFile};
     String url= '';
     if(widget.id!=null) {
-      url = '/create-transaksi';
-    }else{
+
       url = '/transaksi-update/'+widget.id;
+    }else{
+      url = '/create-transaksi';
+
     }
 
     var res = await Network().auth(data, url);
